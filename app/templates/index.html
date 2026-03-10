@@ -1,0 +1,50 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>URL Shortener | DevOps Assignment</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 80px auto; background: #f0f2f5; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h1 { color: #2d3748; }
+        input[type=text] { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        button { background: #4299e1; color: white; border: none; padding: 12px 30px; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #3182ce; }
+        .result { margin-top: 20px; padding: 15px; background: #ebf8ff; border-radius: 6px; word-break: break-all; }
+        a { color: #3182ce; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔗 URL Shortener</h1>
+        <p>Paste a long URL below to get a short link.</p>
+        <form method="POST">
+            <input type="text" name="url" placeholder="https://your-long-url.com/..." required>
+            <br><button type="submit">Shorten URL</button>
+        </form>
+        {% if short_url %}
+        <div class="result">
+            ✅ <strong>Short URL:</strong> <a href="{{ short_url }}">{{ short_url }}</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL Shortener</title>
+</head>
+<body>
+    <h1>URL Shortener DevOps Demo</h1>
+
+    <form method="POST">
+        <input type="text" name="url" placeholder="Enter URL" required>
+        <button type="submit">Shorten</button>
+    </form>
+
+    {% if short_url %}
+        <p>Short URL: <a href="{{ short_url }}">{{ short_url }}</a></p>
+    {% endif %}
+</body>
+</html>

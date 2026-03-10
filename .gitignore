@@ -1,0 +1,19 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# AWS keys
+*.pem
+
+# Python
+__pycache__/
+*.pyc
+
+# Local database
+data/
+
+# OS
+.DS_Store
+Thumbs.db
