@@ -31,14 +31,13 @@ data "aws_ami" "ubuntu" {
 # ============================================================
 # SECURITY GROUP
 # ============================================================
-
 resource "aws_security_group" "web_sg" {
   name        = "url-shortener-sg"
   description = "Security group for URL shortener web app"
 
-  # SSH restricted (no longer open to world)
+  # SSH restricted to specific IP
   ingress {
-    description = "SSH restricted access"
+    description = "SSH access"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -54,20 +53,11 @@ resource "aws_security_group" "web_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Flask app port
+  # Flask port
   ingress {
     description = "Flask application port"
     from_port   = var.app_port
     to_port     = var.app_port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # Restricted outbound traffic
-# Restricted outbound traffic
-  egress {
-    from_port   = 80
-    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
