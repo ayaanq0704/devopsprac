@@ -1,19 +1,48 @@
+# ==============================
 # Terraform
+# ==============================
 .terraform/
 *.tfstate
 *.tfstate.*
+terraform.tfstate
+terraform.tfstate.backup
 .terraform.lock.hcl
 
-# AWS keys
+# ==============================
+# AWS / Secrets
+# ==============================
 *.pem
+*.key
+*.env
 
+# ==============================
+# Trivy Reports
+# ==============================
+trivy-report.json
+
+# ==============================
 # Python
+# ==============================
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.log
 
-# Local database
+# ==============================
+# Local Database
+# ==============================
 data/
+*.db
 
-# OS
+# ==============================
+# Jenkins / CI
+# ==============================
+jenkins_home/
+workspace/
+
+# ==============================
+# OS files
+# ==============================
 .DS_Store
 Thumbs.db
