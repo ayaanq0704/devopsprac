@@ -12,11 +12,10 @@ provider "aws" {
   region = var.aws_region
 }
 
-# Dynamically fetch the latest Ubuntu 22.04 AMI
-# Why? Hardcoding AMI IDs breaks across regions and goes stale
+# Fetch latest Ubuntu AMI
 data "aws_ami" "ubuntu" {
   most_recent = true
-  owners      = ["099720109477"] # Canonical's official AWS account
+  owners      = ["099720109477"]
 
   filter {
     name   = "name"
@@ -30,25 +29,23 @@ data "aws_ami" "ubuntu" {
 }
 
 # ============================================================
-# SECURITY GROUP - Controls what traffic reaches our server
+# SECURITY GROUP
 # ============================================================
+
 resource "aws_security_group" "web_sg" {
   name        = "url-shortener-sg"
   description = "Security group for URL shortener web app"
 
-  # ⚠️ INTENTIONAL VULNERABILITY #1:
-  # SSH open to entire internet (0.0.0.0/0)
-  # Risk: Anyone in the world can attempt to brute-force SSH login
-  # This WILL be flagged by Trivy as CRITICAL
+  # SSH restricted (no longer open to world)
   ingress {
-    description = "SSH access"
+    description = "SSH restricted access"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # ⚠️ VULNERABLE - open to all
+    cidr_blocks = ["10.0.0.0/32"]
   }
 
-  # HTTP access - needed for the app (acceptable to be public)
+  # HTTP access
   ingress {
     description = "HTTP web traffic"
     from_port   = 80
@@ -66,11 +63,11 @@ resource "aws_security_group" "web_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Allow all outbound traffic
+  # Restricted outbound traffic
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -82,41 +79,50 @@ resource "aws_security_group" "web_sg" {
 }
 
 # ============================================================
-# EC2 INSTANCE - The virtual machine running our app
+# EC2 INSTANCE
 # ============================================================
+
 resource "aws_instance" "web_server" {
+
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
   key_name      = var.key_name
 
   vpc_security_group_ids = [aws_security_group.web_sg.id]
 
-  # ⚠️ INTENTIONAL VULNERABILITY #2:
-  # Root volume is NOT encrypted
-  # Risk: If AWS disk is somehow accessed physically or via snapshot,
-  # data is exposed in plaintext
-  # This WILL be flagged by Trivy as HIGH
+  # Enable IMDSv2 for security
+  metadata_options {
+    http_tokens = "required"
+  }
+
+  # Encrypted root disk
   root_block_device {
     volume_size = 8
     volume_type = "gp2"
-    encrypted   = false  # ⚠️ VULNERABLE - should be true
+    encrypted   = true
   }
 
-  # Startup script: installs Docker and runs our app automatically
+  # Startup script
   user_data = <<-EOF
-    #!/bin/bash
-    set -e
-    apt-get update -y
-    apt-get install -y docker.io docker-compose git
-    systemctl start docker
-    systemctl enable docker
-    usermod -aG docker ubuntu
+#!/bin/bash
+set -e
 
-    cd /home/ubuntu
-    git clone https://github.com/ayaanq0704/devopsprac.git app
-    cd app
-    docker-compose up -d
-  EOF
+apt-get update -y
+apt-get install -y docker.io docker-compose git
+
+systemctl start docker
+systemctl enable docker
+
+usermod -aG docker ubuntu
+
+cd /home/ubuntu
+
+git clone https://github.com/ayaanq0704/devopsprac.git app
+
+cd app
+
+docker-compose up -d
+EOF
 
   tags = {
     Name        = "url-shortener-server"
