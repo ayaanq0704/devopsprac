@@ -51,7 +51,7 @@ Trivy detected several security vulnerabilities:
 ![Application](screenshots/final-output.png)
 
 ## Watch the full demonstration here:
-https://drive.google.com/your-video-link
+https://youtu.be/bVjObQGKqFM
 
 ## AI Prompt:
 "I ran Trivy security scan on my Terraform code and got these findings.
