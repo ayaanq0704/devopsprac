@@ -46,20 +46,9 @@ Trivy detected several security vulnerabilities:
 
 ---
 
-### Security Vulnerability Report
-
-![Trivy Scan](screenshots/pipeline-failure.png)
-
----
-
 ### Application Running on AWS EC2
 
 ![Application](screenshots/final-output.png)
-
-## Security Issues Identified and Fixed
-
-Trivy detected several security vulnerabilities:
-![Trivy Scan](screenshots/pipeline-failure.png)
 
 ## Watch the full demonstration here:
 https://drive.google.com/your-video-link
